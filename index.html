@@ -183,6 +183,38 @@
     .lightbox-prev{left:-48px;}.lightbox-next{right:-48px;}
     @media(max-width:600px){.lightbox-prev{left:4px;}.lightbox-next{right:4px;}}
 
+    /* ─── EXPENSE ─── */
+    .expense-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+    .expense-tab{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:white;font-family:'Jua',sans-serif;font-size:.88rem;cursor:pointer;transition:all .2s;color:var(--text-light);}
+    .expense-tab:hover{border-color:var(--mint);color:var(--mint);}
+    .expense-tab.active{background:var(--mint);color:white;border-color:var(--mint);box-shadow:0 3px 10px rgba(91,191,191,.3);}
+    .expense-panel{display:none;}.expense-panel.active{display:block;}
+    .expense-table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+    .expense-table th{background:var(--mint);color:white;font-family:'Jua',sans-serif;font-size:.82rem;padding:10px 8px;text-align:center;}
+    .expense-table th:first-child{text-align:left;border-radius:14px 0 0 0;}
+    .expense-table th:last-child{border-radius:0 14px 0 0;}
+    .expense-table td{padding:8px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
+    .expense-table tr:hover td{background:var(--bg);}
+    .expense-table tr:last-child td{border-bottom:none;}
+    .exp-cat{border:none;outline:none;background:transparent;font-size:.84rem;cursor:pointer;color:var(--text);font-family:'Noto Sans KR',sans-serif;width:100%;padding:2px 0;}
+    .exp-input{border:none;outline:none;background:transparent;font-family:'Noto Sans KR',sans-serif;font-size:.87rem;color:var(--text);width:100%;}
+    .exp-input::placeholder{color:#C0DCDC;}
+    .exp-num{border:none;outline:none;background:transparent;font-family:'Noto Sans KR',sans-serif;font-size:.87rem;color:var(--text);width:70px;text-align:right;}
+    .exp-num::placeholder{color:#C0DCDC;}
+    .exp-krw{font-size:.8rem;color:var(--text-light);text-align:right;white-space:nowrap;}
+    .exp-payer{border:none;outline:none;background:transparent;font-size:.8rem;cursor:pointer;color:var(--text-light);font-family:'Noto Sans KR',sans-serif;}
+    .expense-day-total{display:flex;justify-content:flex-end;gap:16px;padding:10px 4px 2px;border-top:2px dashed var(--border);margin-top:4px;font-family:'Jua',sans-serif;font-size:.9rem;color:var(--text-light);}
+    .expense-day-total b{color:var(--text);}
+    .expense-grand-total{background:linear-gradient(135deg,var(--mint-pale),var(--sky-light));border-radius:16px;padding:18px 22px;margin-top:18px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;}
+    .expense-grand-label{font-family:'Jua',sans-serif;font-size:1rem;color:var(--text);}
+    .expense-grand-nums{display:flex;gap:20px;align-items:baseline;}
+    .expense-grand-thb{font-family:'Jua',sans-serif;font-size:1.3rem;color:var(--mint);}
+    .expense-grand-krw{font-family:'Jua',sans-serif;font-size:1.05rem;color:var(--sky);}
+    .exp-rate-wrap{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--text-light);margin-bottom:14px;justify-content:flex-end;}
+    .exp-rate-input{width:58px;padding:4px 8px;border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;text-align:center;outline:none;font-family:'Noto Sans KR',sans-serif;color:var(--text);}
+    .exp-rate-input:focus{border-color:var(--mint);}
+    .exp-empty{text-align:center;padding:18px;color:var(--text-light);font-size:.88rem;}
+
     /* ─── SAVE MODAL ─── */
     .save-modal-inner{background:white;border-radius:24px;padding:28px 26px;max-width:400px;width:100%;position:relative;box-shadow:0 24px 60px rgba(0,0,0,0.2);}
     .save-modal-title{font-family:'Jua',sans-serif;font-size:1.2rem;color:var(--text);margin-bottom:20px;}
@@ -235,6 +267,7 @@
     <a class="nav-item" onclick="navScrollTo('sec-tour')">🌟 투어</a>
     <a class="nav-item" onclick="navScrollTo('sec-schedule')">📅 일정</a>
     <a class="nav-item" onclick="navScrollTo('sec-packing')">🧳 준비물</a>
+    <a class="nav-item" onclick="navScrollTo('sec-expense')">💰 경비</a>
     <a class="nav-item" onclick="navScrollTo('sec-gallery')">📸 사진첩</a>
     <div class="nav-right">
       <div class="status-pill" id="status-pill">
@@ -348,6 +381,31 @@
       </table>
     </div>
     <button class="add-item-btn" onclick="addRow()">＋ 준비물 추가하기</button>
+  </div>
+
+  <!-- EXPENSE -->
+  <div id="sec-expense" class="section-title">💰 여행 경비</div>
+  <div class="card">
+    <div class="exp-rate-wrap">
+      💱 환율: 1 THB =
+      <input class="exp-rate-input" id="exp-rate" type="number" value="38" min="1" oninput="calcExpenseTotals()"> 원
+    </div>
+    <div class="expense-tabs">
+      <button class="expense-tab active" onclick="switchExpenseDay(0,this)">4/29 수</button>
+      <button class="expense-tab"        onclick="switchExpenseDay(1,this)">4/30 목</button>
+      <button class="expense-tab"        onclick="switchExpenseDay(2,this)">🐘 5/1 금</button>
+      <button class="expense-tab"        onclick="switchExpenseDay(3,this)">🍳 5/2 토</button>
+      <button class="expense-tab"        onclick="switchExpenseDay(4,this)">🧘 5/3 일</button>
+      <button class="expense-tab"        onclick="switchExpenseDay(5,this)">5/4 월</button>
+    </div>
+    <div id="expense-container"></div>
+    <div class="expense-grand-total">
+      <div class="expense-grand-label">💰 전체 여행 경비</div>
+      <div class="expense-grand-nums">
+        <div class="expense-grand-thb">฿ <span id="grand-thb">0</span></div>
+        <div class="expense-grand-krw">₩ <span id="grand-krw">0</span></div>
+      </div>
+    </div>
   </div>
 
   <!-- PHOTOS -->
@@ -493,6 +551,8 @@ async function initFirebase() {
     // localStorage 폴백으로 초기 데이터 로드
     const ls = loadFromLS();
     buildSchedules(ls?.schedule ?? null);
+    buildExpensePanels();
+    if (ls?.expenses) applyRemoteExpenses(ls.expenses);
     ls?.packing ? ls.packing.forEach(i => addRow(i.name, i.jy, i.dy)) : initDefaultPacking();
     if (ls?.photos?.length) { photos = ls.photos; renderGallery(); }
     return;
@@ -515,6 +575,7 @@ async function initFirebase() {
         _remoteUpdate = true;
         if (data.schedule) applyRemoteSchedule(data.schedule);
         if (data.packing)  applyRemotePacking(data.packing);
+        if (data.expenses) applyRemoteExpenses(data.expenses);
         _remoteUpdate = false;
         markSaved();
         setStatus('connected', '실시간 연결됨');
@@ -558,6 +619,7 @@ async function initFirebase() {
     console.error('Firebase 초기화 오류:', e);
     setStatus('error', '초기화 실패');
     buildSchedules(null);
+    buildExpensePanels();
     initDefaultPacking();
   }
 }
@@ -609,6 +671,7 @@ async function saveMainNow() {
     await db.collection('trips').doc(TRIP_DOC_ID).set({
       schedule: collectSchedule(),
       packing:  collectPacking(),
+      expenses: collectExpenses(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     markSaved();
@@ -700,7 +763,7 @@ function collectPacking() {
 /* ─ localStorage 폴백 ─ */
 const LS_KEY = 'cmt-trip-2026';
 function saveToLS() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify({ schedule: collectSchedule(), packing: collectPacking(), photos })); markSaved(); } catch(e) {}
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ schedule: collectSchedule(), packing: collectPacking(), photos, expenses: collectExpenses() })); markSaved(); } catch(e) {}
 }
 function loadFromLS() {
   try { return JSON.parse(localStorage.getItem(LS_KEY)); } catch(e) { return null; }
@@ -912,6 +975,142 @@ document.addEventListener('keydown', e => {
 });
 
 /* ════════════════════════════════
+   여행 경비
+════════════════════════════════ */
+const EXP_CATS = ['식비🍜','교통🚌','숙박🏨','투어🌟','쇼핑🛍️','기타💸'];
+let _expSaveTimer = null;
+
+function buildExpensePanels() {
+  const c = document.getElementById('expense-container');
+  if (!c) return;
+  c.innerHTML = '';
+  days.forEach((day, di) => {
+    const panel = document.createElement('div');
+    panel.className = 'expense-panel' + (di === 0 ? ' active' : '');
+    panel.id = 'expense-panel-' + di;
+    panel.innerHTML = `
+      <table class="expense-table">
+        <thead><tr>
+          <th style="width:14%">분류</th>
+          <th style="width:35%">내용</th>
+          <th style="width:14%;text-align:right">금액(฿)</th>
+          <th style="width:18%;text-align:right">금액(₩)</th>
+          <th style="width:12%">결제자</th>
+          <th style="width:7%"></th>
+        </tr></thead>
+        <tbody id="expense-body-${di}"></tbody>
+      </table>
+      <div class="expense-day-total">하루 합계: <b id="day-thb-${di}">฿ 0</b>&nbsp;&nbsp;<b id="day-krw-${di}">₩ 0</b></div>
+    `;
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-item-btn';
+    addBtn.innerHTML = '＋ 경비 추가하기';
+    addBtn.onclick = () => addExpenseRow(di);
+    panel.appendChild(addBtn);
+    c.appendChild(panel);
+  });
+}
+
+function addExpenseRow(di, data) {
+  const tbody = document.getElementById('expense-body-' + di);
+  if (!tbody) return;
+  const id = data?.id || (Date.now().toString(36) + Math.random().toString(36).slice(2));
+  const rate = parseFloat(document.getElementById('exp-rate')?.value) || 38;
+  const thbVal = data?.thb || '';
+  const krwText = thbVal ? '₩ ' + (parseFloat(thbVal) * rate).toLocaleString() : '-';
+  const catOpts = EXP_CATS.map(c => `<option value="${c}" ${data?.cat === c ? 'selected' : ''}>${c}</option>`).join('');
+  const payerOpts = ['공동','주영','도영'].map(p => `<option value="${p}" ${(data?.payer || '공동') === p ? 'selected' : ''}>${p}</option>`).join('');
+  const tr = document.createElement('tr');
+  tr.dataset.expid = id;
+  tr.innerHTML = `
+    <td><select class="exp-cat">${catOpts}</select></td>
+    <td><input class="exp-input" type="text" placeholder="내용을 입력하세요..." value="${(data?.desc||'').replace(/"/g,'&quot;')}"></td>
+    <td style="text-align:right"><input class="exp-num" type="number" placeholder="0" min="0" value="${thbVal}"></td>
+    <td class="exp-krw">${krwText}</td>
+    <td><select class="exp-payer">${payerOpts}</select></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove();calcExpenseTotals();scheduleExpenseSave()">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+  tr.querySelector('.exp-num').addEventListener('input', function() {
+    const r = parseFloat(document.getElementById('exp-rate')?.value) || 38;
+    this.closest('tr').querySelector('.exp-krw').textContent = this.value ? '₩ ' + (parseFloat(this.value) * r).toLocaleString() : '-';
+    calcExpenseTotals();
+    scheduleExpenseSave();
+  });
+  tr.querySelectorAll('.exp-cat,.exp-input,.exp-payer').forEach(el => {
+    el.addEventListener('input',  () => scheduleExpenseSave());
+    el.addEventListener('change', () => scheduleExpenseSave());
+  });
+  calcExpenseTotals();
+  if (!data) tr.querySelector('.exp-input').focus();
+}
+
+function switchExpenseDay(idx, btn) {
+  document.querySelectorAll('.expense-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.expense-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('expense-panel-' + idx)?.classList.add('active');
+  btn.classList.add('active');
+}
+
+function calcExpenseTotals() {
+  const rate = parseFloat(document.getElementById('exp-rate')?.value) || 38;
+  let grandThb = 0;
+  days.forEach((_, di) => {
+    let dayThb = 0;
+    document.querySelectorAll(`#expense-body-${di} tr`).forEach(tr => {
+      const num = parseFloat(tr.querySelector('.exp-num')?.value) || 0;
+      dayThb += num;
+      const krwCell = tr.querySelector('.exp-krw');
+      if (krwCell) krwCell.textContent = num ? '₩ ' + (num * rate).toLocaleString() : '-';
+    });
+    grandThb += dayThb;
+    const thbEl = document.getElementById('day-thb-' + di);
+    const krwEl = document.getElementById('day-krw-' + di);
+    if (thbEl) thbEl.textContent = '฿ ' + dayThb.toLocaleString();
+    if (krwEl) krwEl.textContent = '₩ ' + (dayThb * rate).toLocaleString();
+  });
+  const gThb = document.getElementById('grand-thb');
+  const gKrw = document.getElementById('grand-krw');
+  if (gThb) gThb.textContent = grandThb.toLocaleString();
+  if (gKrw) gKrw.textContent = (grandThb * rate).toLocaleString();
+}
+
+function collectExpenses() {
+  const result = {};
+  days.forEach((_, di) => {
+    result[di] = [];
+    document.querySelectorAll(`#expense-body-${di} tr`).forEach(tr => {
+      result[di].push({
+        id:    tr.dataset.expid || '',
+        cat:   tr.querySelector('.exp-cat')?.value   || '기타💸',
+        desc:  tr.querySelector('.exp-input')?.value || '',
+        thb:   parseFloat(tr.querySelector('.exp-num')?.value) || 0,
+        payer: tr.querySelector('.exp-payer')?.value || '공동'
+      });
+    });
+  });
+  return result;
+}
+
+function applyRemoteExpenses(expData) {
+  if (!expData) return;
+  days.forEach((_, di) => {
+    const tbody = document.getElementById('expense-body-' + di);
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    (expData[di] || []).forEach(item => addExpenseRow(di, item));
+  });
+  calcExpenseTotals();
+}
+
+function scheduleExpenseSave() {
+  if (_remoteUpdate) return;
+  markUnsaved();
+  clearTimeout(_expSaveTimer);
+  _expSaveTimer = setTimeout(saveMainNow, 1500);
+}
+
+/* ════════════════════════════════
    저장 모달 / GitHub 배포
 ════════════════════════════════ */
 function openSaveModal() {
@@ -979,7 +1178,7 @@ function showToast(msg, type = '') {
 function navScrollTo(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 window.addEventListener('scroll', () => {
   const items = document.querySelectorAll('.nav-item');
-  const secs  = ['sec-flight','sec-tour','sec-schedule','sec-packing','sec-gallery'];
+  const secs  = ['sec-flight','sec-tour','sec-schedule','sec-packing','sec-expense','sec-gallery'];
   let cur = 0;
   secs.forEach((id, i) => { const el = document.getElementById(id); if (el && window.scrollY >= el.offsetTop - 80) cur = i; });
   items.forEach((item, i) => item.classList.toggle('active', i === cur));
@@ -992,6 +1191,7 @@ window.addEventListener('scroll', () => {
 // 설정 안 됐으면 initFirebase() 내부에서 처리
 if (isFirebaseConfigured()) {
   buildSchedules(null); // 기본값으로 먼저 그림 → onSnapshot 오면 덮어씀
+  buildExpensePanels();
 }
 initFirebase();
 </script>
